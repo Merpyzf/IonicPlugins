@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="cordova-plugin-backgroundtask" version="0.0.1" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>OfflineTask</name>
+    <js-module name="BackgroundTask" src="www/BackgroundTask.js">
+        <clobbers target="cordova.plugins.BackgroundTask" />
+    </js-module>
+
+    <platform name="android">
+		<config-file parent="/*" target="res/xml/config.xml">
+			<feature name="BackgroundTask">
+				<param name="android-package" value="com.zijin.plugin.BackgroundTask" />
+			</feature>
+		</config-file>
+
+         <config-file target="res/xml/config.xml" parent="/*">
+            <preference name="KeepRunning" value="true" />
+        </config-file>
+
+        <source-file src="src/android/BackgroundService.java" target-dir="src/com/zijin/plugin" />		
+        <source-file src="src/android/BackgroundTask.java" target-dir="src/com/zijin/plugin" />	
+
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <service android:name="com.zijin.plugin.BackgroundService" />
+        </config-file>
+
+     </platform>
+
+</plugin>

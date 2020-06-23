@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="cordova-plugin-ping" version="0.0.1" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>Ping</name>
+    <js-module name="Ping" src="www/Ping.js">
+        <clobbers target="cordova.plugins.Ping" />
+    </js-module>
+
+    <platform name="android">
+		<config-file parent="/*" target="res/xml/config.xml">
+			<feature name="Ping">
+				<param name="android-package" value="com.zijin.plugin.Ping" />
+			</feature>
+		</config-file>
+
+         <config-file target="res/xml/config.xml" parent="/*">
+            <preference name="KeepRunning" value="true" />
+        </config-file>
+
+        <source-file src="src/android/Ping.java" target-dir="src/com/zijin/plugin" />		
+
+     </platform>
+
+</plugin>
