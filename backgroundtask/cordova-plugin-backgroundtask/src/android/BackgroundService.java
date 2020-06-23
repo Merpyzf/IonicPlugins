@@ -1,9 +1,11 @@
 package com.zijin.plugin;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.util.Log;
 
 import org.apache.cordova.CallbackContext;
@@ -11,6 +13,7 @@ import org.apache.cordova.PluginResult;
 
 public class BackgroundService extends Service {
     private static final String TAG = "wk";
+    private static final String WAKE_LOCK_TAG = "backgroundservice: mywakelocktag";
     /**
      * binder提供给客户端调用
      */
@@ -19,7 +22,9 @@ public class BackgroundService extends Service {
     private boolean isDestroy = false;
     private boolean isPauseTask = true;
     private long taskExtInterval = 3 * 1000;
+    private Context context;
     private Thread thread;
+    private PowerManager.WakeLock wakeLock;
 
     public BackgroundService() {
     }
@@ -27,6 +32,11 @@ public class BackgroundService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        this.context = getApplicationContext();
+        // 持有锁，避免CPU休眠导致定时任务被暂停
+        PowerManager pm = (PowerManager) this.context.getSystemService(Context.POWER_SERVICE);
+        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_TAG);
+        wakeLock.acquire();
         Log.i(TAG, "服务创建&线程启动了");
         thread = new Thread(new Runnable() {
             @Override
@@ -96,6 +106,10 @@ public class BackgroundService extends Service {
     @Override
     public void onDestroy() {
         this.isDestroy = true;
+        if (wakeLock != null) {
+            wakeLock.release();
+            wakeLock = null;
+        }
         super.onDestroy();
     }
 
